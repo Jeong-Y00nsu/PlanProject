@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jRyun.demo.planProject.plan.mapper.PlanMapper">
+    <select id="selectPlanByDt" parameterType="String" resultType="List">
+        SELECT
+            *
+        FROM Plan
+        <![CDATA[
+            WHERE startDt <= STR_TO_DATE(#{date},"%Y%m%d%H%i%s")
+            AND endDt >= STR_TO_DATE(#{date},"%Y%m%d%H%i%s")
+        ]]>
+    </select>
+
+    <select id="selectById" parameterType="String" resultType="com.jRyun.demo.planProject.plan.domain.Plan">
+        SELECT
+            *
+        FROM Plan
+        WHERE id=#{id}
+    </select>
+
+    <insert id="insertPlan" parameterType="com.jRyun.demo.planProject.plan.domain.Plan">
+        INSERT INTO Plan (ID, TITLE, TEXT, START_DT, END_DT)
+        VALUES (#{plan.id},#{plan.title},#{plan.text},#{plan.startDt}, #{plan.endDt})
+    </insert>
+
+    <delete id="deletePlanById" parameterType="String">
+        DELETE FROM Plan WHERE ID=#{id}
+    </delete>
+
+    <update id="updatePlanById" parameterType="com.jRyun.demo.planProject.plan.domain.Plan">
+        UPDATE Plan
+            <trim  prefix="SET" suffixOverrides=",">
+                <if test="plan.title != null">TITLE=#{title},</if>
+                <if test="plan.text != null">TEXT=#{text},</if>
+                <if test="plan.startDt != null">START_DT=#{startDt},</if>
+                <if test="plan.endDt != null">END_DT=#{endDt},</if>
+            </trim>
+        WHERE ID=#{plan.id}
+    </update>
+
+    <select id="countDuplicateId" parameterType="String" resultType="int">
+        SELECT COUNT(ID) AS CNT FROM Plan WHERE ID=#{id}
+    </select>
+
+</mapper>
