@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>월별 일정</title>
+</head>
+<body>
+<script src="/js/getMonthlyPlan.js"></script>
+<div class="planDiv">
+    <div class="plans">
+        <h1>일정</h1>
+        <div class="yearDiv">
+            <input class="preYearBtn" type="button" id="preYearBtn" value="◀"/>
+            <input class="year" type="text" id="year" disabled/>
+            <input class="nextYearBtn" type="button" id="nextYearBtn" value="▶"/>
+        </div>
+        <div class="monthDiv">
+            <input class="preMonthBtn" type="button" id="preMonthBtn" value="◀"/>
+            <input class="month" type="text" id="month" disabled/>
+            <input class="nextMonthBtn" type="button" id="nextMonthBtn" value="▶"/>
+        </div>
+        <fieldset>
+            <legend>달력</legend>
+            <table class="calendar" id="calendar">
+                <tr>
+                    <th>일</th>
+                    <th>월</th>
+                    <th>화</th>
+                    <th>수</th>
+                    <th>목</th>
+                    <th>금</th>
+                    <th>토</th>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</div>
+<div>
+    <input type="button" value="일정 추가" id="addPlanBtn" />
+    <input type="button" value="로그아웃" id="logoutBtn" />
+</div>
+</body>
+</html>
