@@ -6,5 +6,6 @@ public enum ResultCode {
     OK,
     DUPLICATE_ID,
     INVALID_PARAM,
-    FAIL
+    FAIL,
+    NOT_EXIST
 }

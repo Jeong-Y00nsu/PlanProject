@@ -16,9 +16,18 @@ public class Plan implements Serializable, Comparable<Plan> {
     private LocalDate startDt;
     private LocalDate endDt;
 
+    private String planId;
+
     public Plan(){}
     public Plan(String id, String title, String text, LocalDate startDt, LocalDate endDt) {
         this.id = id;
+        this.title = title;
+        this.text = text;
+        this.startDt = startDt;
+        this.endDt = endDt;
+    }
+
+    public Plan(String title, String text, LocalDate startDt, LocalDate endDt) {
         this.title = title;
         this.text = text;
         this.startDt = startDt;

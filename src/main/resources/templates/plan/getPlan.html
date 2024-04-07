@@ -1,10 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
-
+<script src="/js/getPlan.js"></script>
+    <h1>일정</h1>
+    <table>
+        <tr>
+            <th>제목</th>
+            <th>시작일</th>
+            <th>종료일</th>
+            <th>내용</th>
+        </tr>
+        <tr>
+            <td th:text="${plan.title}">title</td>
+            <td th:text="${plan.startDt}">startDt</td>
+            <td th:text="${plan.endDt}">endDt</td>
+            <td th:text="${plan.text}">text</td>
+        </tr>
+    </table>
 </body>
 </html>

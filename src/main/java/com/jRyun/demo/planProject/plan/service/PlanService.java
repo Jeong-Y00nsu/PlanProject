@@ -46,7 +46,7 @@ public class PlanService {
         return planMapper.selectPlanByDt(current.toString());
     }
 
-    public Plan getPlan(String id){
+    public Plan getPlanById(String id){
         return planMapper.selectById(id);
     }
 
@@ -68,6 +68,12 @@ public class PlanService {
         if(result.getResult() != ResultCode.OK) return result;
         planMapper.updatePlanById(plan);
         return result;
+    }
+
+    public Response deletePlan(String planId){
+        if(planMapper.countDuplicateId(planId)<1) return new Response(ResultCode.NOT_EXIST,"존재하지 않는 일정입니다.");
+        planMapper.deletePlanById(planId);
+        return new Response(ResultCode.OK,"일정을 삭제했습니다.");
     }
 
     private Response validationRegParam(Plan plan){
