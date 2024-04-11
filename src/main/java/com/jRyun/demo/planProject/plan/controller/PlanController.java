@@ -5,11 +5,14 @@ import com.jRyun.demo.planProject.plan.domain.PlanReq;
 import com.jRyun.demo.planProject.plan.service.PlanService;
 import com.jRyun.demo.planProject.util.Response;
 import com.jRyun.demo.planProject.util.ResultCode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -26,6 +29,7 @@ public class PlanController {
         this.planService = planService;
     }
 
+    static final Logger logger = LoggerFactory.getLogger(PlanController.class);
     static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddhh24mm");
 
     @RequestMapping("/getMonthlyPlan")
@@ -60,11 +64,11 @@ public class PlanController {
     }
 
     @RequestMapping("/addPlan")
-    public String addPlan(Model model, @RequestParam("planReq") PlanReq planReq){
+    public String addPlan(Model model, @RequestParam("planReq") PlanReq planReq, @SessionAttribute(name="userId")String userId){
 
-        Plan plan = new Plan(planReq.getTitle(),planReq.getText(),LocalDate.parse(planReq.getStartDtStr(),dtf),LocalDate.parse(planReq.getEndDtStr(),dtf));
+        Plan plan = new Plan(planReq.getTitle(),planReq.getText(),LocalDate.parse(planReq.getStartDtStr(),dtf),LocalDate.parse(planReq.getEndDtStr(),dtf),userId);
 
-        Response response = planService.regPlan(plan);
+        Response response = planService.addPlan(plan);
         if(response.getResult().equals(ResultCode.OK)){
             return "plan/getMonthlyPlan";
         } else if(response.getResult().equals(ResultCode.INVALID_PARAM)){

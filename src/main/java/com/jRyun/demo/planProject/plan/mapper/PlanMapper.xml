@@ -20,8 +20,8 @@
     </select>
 
     <insert id="insertPlan" parameterType="com.jRyun.demo.planProject.plan.domain.Plan">
-        INSERT INTO Plan (ID, TITLE, TEXT, START_DT, END_DT)
-        VALUES (#{plan.id},#{plan.title},#{plan.text},#{plan.startDt}, #{plan.endDt})
+        INSERT INTO Plan (ID, TITLE, TEXT, START_DT, END_DT, USER_ID)
+        VALUES (#{plan.id},#{plan.title},#{plan.text},#{plan.startDt}, #{plan.endDt}, #{plan.userId})
     </insert>
 
     <delete id="deletePlanById" parameterType="String">
@@ -31,10 +31,11 @@
     <update id="updatePlanById" parameterType="com.jRyun.demo.planProject.plan.domain.Plan">
         UPDATE Plan
             <trim  prefix="SET" suffixOverrides=",">
-                <if test="plan.title != null">TITLE=#{title},</if>
-                <if test="plan.text != null">TEXT=#{text},</if>
-                <if test="plan.startDt != null">START_DT=#{startDt},</if>
-                <if test="plan.endDt != null">END_DT=#{endDt},</if>
+                <if test="plan.title != null">TITLE=#{plan.title},</if>
+                <if test="plan.text != null">TEXT=#{plan.text},</if>
+                <if test="plan.startDt != null">START_DT=#{plan.startDt},</if>
+                <if test="plan.endDt != null">END_DT=#{plan.endDt},</if>
+                <if test="plan.userId != null">USER_ID=#{plan.userId}</if>
             </trim>
         WHERE ID=#{plan.id}
     </update>

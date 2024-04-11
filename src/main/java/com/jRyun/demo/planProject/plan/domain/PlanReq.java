@@ -29,4 +29,6 @@ public class PlanReq {
     private String text;
     private String id;
 
+    private String userId;
+
 }

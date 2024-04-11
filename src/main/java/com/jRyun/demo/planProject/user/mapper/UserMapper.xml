@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.jRyun.demo.planProject.user.mapper.UserMapper">
+
     <select id="selectUserById" parameterType="String" resultType="com.jRyun.demo.planProject.user.domain.User">
         SELECT
             *
@@ -9,12 +10,26 @@
         WHERE ID=#{id}
     </select>
 
-    <insert id="insertUser" parameterType="User">
+    <insert id="insertUser" parameterType="com.jRyun.demo.planProject.user.domain.User">
         INSERT INTO UserTable (ID, PW, NAME, SALT)
         VALUES (#{user.id},#{user.pw},#{user.name},#{user.salt})
     </insert>
 
     <delete id="deleteUser" parameterType="String">
-
+        DELETE FROM UserTable WHERE ID = #{id}
     </delete>
+
+    <update id="updateUser" parameterType="com.jRyun.demo.planProject.user.domain.User">
+        UPDATE UserTable
+        <trim  prefix="SET" suffixOverrides=",">
+            <if test="user.pw != null">PW=#{user.pw},</if>
+            <if test="plan.text != null">SALT=#{user.salt},</if>
+        </trim>
+        WHERE ID = #{id}
+    </update>
+
+    <select id="countDuplicateId" parameterType="String" resultType="int">
+        SELECT COUNT(ID) AS CNT FROM UserTable WHERE ID=#{id}
+    </select>
+
 </mapper>

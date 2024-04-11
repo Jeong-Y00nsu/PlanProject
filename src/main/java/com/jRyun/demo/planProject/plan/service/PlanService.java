@@ -50,7 +50,7 @@ public class PlanService {
         return planMapper.selectById(id);
     }
 
-    public Response regPlan(Plan plan){
+    public Response addPlan(Plan plan){
         try {
             Response result = validationRegParam(plan);
             if (result.getResult() != ResultCode.OK) return result;

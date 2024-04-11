@@ -16,7 +16,7 @@ public class Plan implements Serializable, Comparable<Plan> {
     private LocalDate startDt;
     private LocalDate endDt;
 
-    private String planId;
+    private String userId;
 
     public Plan(){}
     public Plan(String id, String title, String text, LocalDate startDt, LocalDate endDt) {
@@ -32,6 +32,14 @@ public class Plan implements Serializable, Comparable<Plan> {
         this.text = text;
         this.startDt = startDt;
         this.endDt = endDt;
+    }
+
+    public Plan(String title, String text, LocalDate startDt, LocalDate endDt, String userId) {
+        this.title = title;
+        this.text = text;
+        this.startDt = startDt;
+        this.endDt = endDt;
+        this.userId = userId;
     }
 
     @Override
