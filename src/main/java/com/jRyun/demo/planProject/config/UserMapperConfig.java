@@ -14,7 +14,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import javax.sql.DataSource;
 
 @Configuration
-@MapperScan(value = "com.jRyun.demo.planProject.user.mapper", sqlSessionFactoryRef = "userFactory")
+@MapperScan(value = "com.jRyun.demo.planProject.user.mapper", sqlSessionFactoryRef = "userSqlSessionFactory")
 public class UserMapperConfig {
 
     @Bean(name="userDatasource")

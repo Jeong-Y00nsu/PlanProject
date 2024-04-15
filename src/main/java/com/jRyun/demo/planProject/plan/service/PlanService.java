@@ -1,6 +1,7 @@
 package com.jRyun.demo.planProject.plan.service;
 
 import com.jRyun.demo.planProject.plan.domain.Plan;
+import com.jRyun.demo.planProject.plan.domain.PlanReq;
 import com.jRyun.demo.planProject.plan.mapper.PlanMapper;
 import com.jRyun.demo.planProject.util.*;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -33,7 +35,7 @@ public class PlanService {
             Map<LocalDate, List<Plan>> day = new HashMap<>();
             LocalDate tmpDate = pivot.withDayOfMonth(i);
 
-            List<Plan> plans = planMapper.selectPlanByDt(tmpDate.toString());
+            List<Plan> plans = planMapper.selectPlanByDt(makeDatRange(tmpDate));
             day.put(tmpDate,plans);
 
             result.add(day);
@@ -43,7 +45,7 @@ public class PlanService {
 
     public List<Plan> getDailyPlan(String year, String month, String day){
         LocalDate current = LocalDate.parse(year+month+day, DateTimeFormatter.ofPattern("yyyyMMdd").withLocale(Locale.KOREA));
-        return planMapper.selectPlanByDt(current.toString());
+        return planMapper.selectPlanByDt(makeDatRange(current));
     }
 
     public Plan getPlanById(String id){
@@ -155,6 +157,13 @@ public class PlanService {
             logger.info("[PlanService][makePlanKey] 일정 Key 생성 중 예외 발생\n {}",e);
             throw new Exception(e);
         }
+    }
+
+    private PlanReq makeDatRange(LocalDate pivotDate){
+        PlanReq result = new PlanReq();
+        result.setStartDt(pivotDate.atStartOfDay());
+        result.setEndDt(pivotDate.plusDays(1).atStartOfDay());
+        return result;
     }
 
 }

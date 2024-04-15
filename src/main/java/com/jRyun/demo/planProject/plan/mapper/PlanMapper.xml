@@ -2,13 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.jRyun.demo.planProject.plan.mapper.PlanMapper">
-    <select id="selectPlanByDt" parameterType="String" resultType="List">
+    <select id="selectPlanByDt" parameterType="com.jRyun.demo.planProject.plan.domain.PlanReq" resultType="List">
         SELECT
             *
         FROM Plan
         <![CDATA[
-            WHERE startDt <= STR_TO_DATE(#{date},"%Y%m%d%H%i%s")
-            AND endDt >= STR_TO_DATE(#{date},"%Y%m%d%H%i%s")
+            WHERE startDt <= #{planReq.startDt}
+            AND endDt > #{planReq.endDt}
         ]]>
     </select>
 

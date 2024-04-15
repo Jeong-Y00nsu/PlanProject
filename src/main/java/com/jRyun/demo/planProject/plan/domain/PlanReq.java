@@ -3,6 +3,7 @@ package com.jRyun.demo.planProject.plan.domain;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 public class PlanReq {
@@ -16,14 +17,14 @@ public class PlanReq {
     private int startDay;
     private String startDtStr;
 
-    private LocalDate startDt;
+    private LocalDateTime startDt;
 
     private int endYear;
     private int endMonth;
     private int endDay;
     private String endDtStr;
 
-    private LocalDate endDt;
+    private LocalDateTime endDt;
 
     private String title;
     private String text;
