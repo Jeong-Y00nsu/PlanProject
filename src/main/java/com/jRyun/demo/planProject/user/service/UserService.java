@@ -139,4 +139,14 @@ public class UserService {
         Cypher cypher = new Cypher();
         return cypher.encrypt(user.getPw() + user.getSalt());
     }
+
+    public Response isDuplicatedId(String userId) {
+        if(userId==null|| userId.isEmpty()) return new Response(ResultCode.FAIL, "ID값을 입력해주세요.");
+        int cnt = userMapper.countDuplicateId(userId);
+        if(cnt <= 0){
+            return new Response(ResultCode.OK, "사용할 수 있는 ID입니다.");
+        } else {
+            return new Response(ResultCode.DUPLICATE_ID, "중복된 ID입니다. 다시 입력해주세요.");
+        }
+    }
 }

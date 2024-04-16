@@ -9,10 +9,15 @@ import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Map;
 
 @Controller
 public class UserController {
@@ -50,7 +55,7 @@ public class UserController {
         return "user/signUp";
     }
 
-    @RequestMapping("/signUp")
+    @PostMapping("/signUp")
     public String signUp(Model model, @RequestParam(name="user")User user){
         Response response = userService.signUp(user);
         if(response.getResult()== ResultCode.OK){
@@ -68,5 +73,18 @@ public class UserController {
             session.invalidate();
         }
         return "user/signIn";
+    }
+
+    @PostMapping("/checkDuplicateId")
+    public ResponseEntity<Response> checkDuplicateId (@RequestBody(required = false) Map<String, Object> userId){
+        if (userId == null) {
+            return ResponseEntity.badRequest().body(new Response(ResultCode.FAIL, "User data is null"));
+        }
+        String id = (String)userId.get("id");
+        Response response = userService.isDuplicatedId(id);
+        if (response == null) {
+            return ResponseEntity.internalServerError().body(new Response(ResultCode.FAIL, "Internal server error"));
+        }
+        return ResponseEntity.ok(response);
     }
 }

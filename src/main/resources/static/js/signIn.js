@@ -4,8 +4,8 @@ let param = {
 }
 
 function setParam(){
-    param.id = document.getElementById('id');
-    param.pw = document.getElementById('pw');
+    param.id = document.getElementById('id').value;
+    param.pw = document.getElementById('pw').value;
 }
 function validateParam(){
     let isValidate = true;
@@ -29,10 +29,7 @@ function validateParam(){
 }
 function eventBinding(){
     $("#signUpBtn").click(function(){
-       return $.ajax({
-           method: 'POST',
-           url: '/signUpPage'
-       });
+        window.location.href = '/signUpPage';
     });
 
     $("#signInBtn").click(function(){
