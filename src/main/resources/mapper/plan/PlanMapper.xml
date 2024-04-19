@@ -9,6 +9,7 @@
         <![CDATA[
             WHERE startDt <= #{planReq.startDt}
             AND endDt > #{planReq.endDt}
+            AND userId = #{planReq.userId}
         ]]>
     </select>
 

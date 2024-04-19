@@ -22,7 +22,7 @@ import java.util.Map;
 @Controller
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
 
     static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
@@ -33,36 +33,39 @@ public class UserController {
 
     @RequestMapping("/signInPage")
     public String signInPage(Model model){
-        return "user/signIn";
+        return "/user/signIn";
     }
 
     @RequestMapping("/signIn")
     public String signIn(HttpServletRequest httpServletRequest, Model model, @RequestParam(name="user")User user){
+        logger.info("[UserController.signIn()] signIn start.");
         Response response = userService.signIn(user);
         if(response.getResult()== ResultCode.OK){
             httpServletRequest.getSession().invalidate();
             HttpSession session = httpServletRequest.getSession(true);
             session.setAttribute("userId", user.getId());
-            return "plan/getMonthlyPlan";
+            logger.info("[UserController.signIn()] signIn success.");
+            return "/plan/getMonthlyPlan";
         }else {
             model.addAttribute("result",response.getMessage());
-            return "user/signIn";
+            logger.info("[UserController.signIn()] signIn failed.");
+            return "/user/signIn";
         }
     }
 
     @RequestMapping("/signUpPage")
     public String signUpPage(Model model){
-        return "user/signUp";
+        return "/user/signUp";
     }
 
     @PostMapping("/signUp")
     public String signUp(Model model, @RequestParam(name="user")User user){
         Response response = userService.signUp(user);
         if(response.getResult()== ResultCode.OK){
-            return "user/signIn";
+            return "/user/signIn";
         }else {
             model.addAttribute("result",response.getMessage());
-            return "user/signUp";
+            return "/user/signUp";
         }
     }
 
@@ -72,7 +75,7 @@ public class UserController {
         if(session != null) {
             session.invalidate();
         }
-        return "user/signIn";
+        return "/user/signIn";
     }
 
     @PostMapping("/checkDuplicateId")

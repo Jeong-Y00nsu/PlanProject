@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -27,7 +26,17 @@ public class PlanService {
         this.planMapper = planMapper;
     }
 
-    public List<Map<LocalDate,List<Plan>>> getMonthlyPlan(String year, String month){
+    /**
+     * getMonthlyPlan
+     * 입력으로 받은 월의 각 날짜가 포함되는 일정들을 조회
+     *
+     * @param year
+     * @param month
+     * @param userId
+     * @return 월별 일정
+     */
+    public List<Map<LocalDate,List<Plan>>> getMonthlyPlan(String year, String month, String userId){
+        logger.info("[PlanSerivce.getMonthlyPlan()] year={}, month={}, userId={}",year,month,userId);
         LocalDate pivot = LocalDate.parse(year+month+"01", DateTimeFormatter.ofPattern("yyyyMMdd").withLocale(Locale.KOREA));
         List<Map<LocalDate, List<Plan>>> result = new ArrayList<>();
 
@@ -35,49 +44,113 @@ public class PlanService {
             Map<LocalDate, List<Plan>> day = new HashMap<>();
             LocalDate tmpDate = pivot.withDayOfMonth(i);
 
-            List<Plan> plans = planMapper.selectPlanByDt(makeDatRange(tmpDate));
+            List<Plan> plans = planMapper.selectPlanByDt(makeDateRange(tmpDate,userId));
             day.put(tmpDate,plans);
 
             result.add(day);
         }
+        logger.info("[PlanService.getMonthlyPlan()] response");
         return result;
     }
 
-    public List<Plan> getDailyPlan(String year, String month, String day){
+    /**
+     * getDailyPlan
+     *  입력으로 받은 날짜가 포함되는 일정들을 조회
+     *  
+     * @param year
+     * @param month
+     * @param day
+     * @param userId
+     * @return 일별 일정
+     */
+    public List<Plan> getDailyPlan(String year, String month, String day, String userId){
+        logger.info("[PlanService.getDailyPlan()] year={}, month={}, day={}, userId={}",year,month,day,userId);
         LocalDate current = LocalDate.parse(year+month+day, DateTimeFormatter.ofPattern("yyyyMMdd").withLocale(Locale.KOREA));
-        return planMapper.selectPlanByDt(makeDatRange(current));
+        logger.info("[PlanService.getDailyPlan()] response");
+        return planMapper.selectPlanByDt(makeDateRange(current, userId));
     }
 
-    public Plan getPlanById(String id){
-        return planMapper.selectById(id);
+    /**
+     * getPlanById
+     * 입력으로 받은 일정 ID를 가지고 일정 조회
+     *
+     * @param planId
+     * @return
+     */
+    public Plan getPlanById(String planId){
+        logger.info("[PlanService.getPlanById()] id={}",planId);
+        return planMapper.selectById(planId);
     }
 
+    /**
+     * addPlan
+     * 일정 추가
+     *
+     * @param plan
+     * @return
+     */
     public Response addPlan(Plan plan){
+        logger.info("[PlanService.addPlan()] plan={}",plan.toString());
         try {
             Response result = validationRegParam(plan);
             if (result.getResult() != ResultCode.OK) return result;
             plan.setId(makePlanKey());
             planMapper.insertPlan(plan);
+            logger.info("[PlanService.addPlan()] Add plan success");
             return result;
         } catch (Exception e){
-            logger.info("[PlanService][regPlan] fail makePlanKey");
+            logger.info("[PlanService.regPlan()] Error");
             return new Response(ResultCode.FAIL,"일정 등록 실패");
         }
     }
 
+    /**
+     * updatePlan
+     * 일정 수정
+     *
+     * @param plan
+     * @return
+     */
     public Response updatePlan(Plan plan){
-        Response result = validationUpdateParam(plan);
-        if(result.getResult() != ResultCode.OK) return result;
-        planMapper.updatePlanById(plan);
-        return result;
+        logger.info("[PlanService.updatePlan()] plan={}",plan.toString());
+        try{
+            Response result = validationUpdateParam(plan);
+            if(result.getResult() != ResultCode.OK) return result;
+            planMapper.updatePlanById(plan);
+            logger.info("[PlanService.updatePlan()] Modify plan success");
+            return result;
+        } catch(Exception e){
+            logger.info("[PlanService.updatePlan()] Error");
+            return new Response(ResultCode.FAIL,"일정 수정 실패");
+        }
+
     }
 
+    /**
+     * deletePlan
+     * 일정 삭제
+     *
+     * @param planId
+     * @return
+     */
     public Response deletePlan(String planId){
-        if(planMapper.countDuplicateId(planId)<1) return new Response(ResultCode.NOT_EXIST,"존재하지 않는 일정입니다.");
+        logger.info("[PlanService.deletePlan()] planId={}",planId);
+        if(planMapper.countDuplicateId(planId)<1) {
+            logger.info("[PlanService.deletePlan()] Not exist plan");
+            return new Response(ResultCode.NOT_EXIST,"존재하지 않는 일정입니다.");
+        }
         planMapper.deletePlanById(planId);
+        logger.info("[PlanService.deletePlan()] Delete plan success");
         return new Response(ResultCode.OK,"일정을 삭제했습니다.");
     }
 
+    /**
+     * validationRegParam
+     * 일정 추가를 위해 입력으로 들어온 일정 검증
+     *
+     * @param plan
+     * @return
+     */
     private Response validationRegParam(Plan plan){
         //제목
         String[] chars = {"/","=","!","'"};
@@ -111,6 +184,13 @@ public class PlanService {
         return new Response(ResultCode.OK,"OK");
     }
 
+    /**
+     * validationUpdateParam
+     * 일정 수정을 위해 입력으로 들어온 일정 검증
+     * 
+     * @param plan
+     * @return
+     */
     private Response validationUpdateParam(Plan plan){
         //제목
         String[] chars = {"/","=","!","'"};
@@ -144,23 +224,39 @@ public class PlanService {
         return new Response(ResultCode.OK,"OK");
     }
 
+    /**
+     * makePlanKey
+     * 일정 추가 시 필요한 일정 ID 생성 메소드
+     *
+     * @return
+     * @throws Exception
+     */
     public String makePlanKey() throws Exception{
         try {
             Cypher cypher = new Cypher();
-            String planKey = "";
 
             String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             String seed = MakeRandomStr.makeRandomPk(7);
 
             return cypher.encrypt(today + seed);
         } catch (NoSuchAlgorithmException e){
-            logger.info("[PlanService][makePlanKey] 일정 Key 생성 중 예외 발생\n {}",e);
+            logger.info("[PlanService.makePlanKey()] 일정 Key 생성 중 예외 발생: {}",e.getMessage());
             throw new Exception(e);
         }
     }
 
-    private PlanReq makeDatRange(LocalDate pivotDate){
+    /**
+     * makeDateRange
+     * 입력으로 기준 날짜가 들어오면 조회를 위한 날짜 범위를 만들어주는 메소드
+     * 시작일자는 기준 날짜의 0시, 종료일자는 기준 날짜 다음날 0시
+     *
+     * @param pivotDate
+     * @param userId
+     * @return PlanReq.startDt, PlanReq.endDt
+     */
+    private PlanReq makeDateRange(LocalDate pivotDate, String userId){
         PlanReq result = new PlanReq();
+        result.setUserId(userId);
         result.setStartDt(pivotDate.atStartOfDay());
         result.setEndDt(pivotDate.plusDays(1).atStartOfDay());
         return result;

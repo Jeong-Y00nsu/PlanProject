@@ -14,7 +14,7 @@ public interface PlanMapper {
 
     List<Plan> selectPlanByDt(@Param("planReq") PlanReq planReq);
 
-    Plan selectById(@Param("id")String id);
+    Plan selectById(@Param("id") String id);
 
     void insertPlan(@Param("plan")Plan plan);
 
